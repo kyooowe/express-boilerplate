@@ -16,10 +16,8 @@ const Mailer = async ({ from, to, subject, text, html }: IMailer) => {
         }
     });
 
-    /**
-     * @param info(return) - just added so you can store logs if ever you needed
-     */
-    const info = await transporter.sendMail({
+    
+    await transporter.sendMail({
         from: `${from}`,
         to: `${to}`,
         subject: `${subject}`,
