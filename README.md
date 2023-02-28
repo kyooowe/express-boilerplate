@@ -2,7 +2,7 @@
 ![Logo](https://mir-s3-cdn-cf.behance.net/project_modules/1400/74731f76965389.5c7945b0cfcc3.gif)
 
 
-# Ecommerce Portal
+# Express-Boilerplate
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
 A boilerplate/template for building RestAPI's using NodeJS, TypeScript, Express and Mongoose
