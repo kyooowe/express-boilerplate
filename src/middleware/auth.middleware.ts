@@ -1,5 +1,5 @@
 //#region Import
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { SingleApiResponse } from '../helpers/response.helper';
 import { CustomRequest } from "../interface/request.interface";
@@ -15,6 +15,7 @@ export const AuthChecker = async (req: Request, res: Response, next: NextFunctio
             throw new Error()
         
         // Decode token
+        // eslint-disable-next-line
         const decoded = jwt.verify(token, secretKey) as any;
 
         // Make request as CustomRequest
@@ -24,7 +25,7 @@ export const AuthChecker = async (req: Request, res: Response, next: NextFunctio
         // Run next function
         next();
 
-    } catch(err: any) {
+    } catch(err: unknown) {
         res.status(401).json(SingleApiResponse({ success: false, data: null, statusCode: 401 }))
     }
 }   

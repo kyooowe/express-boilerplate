@@ -5,7 +5,7 @@ import mongoose, { ConnectOptions } from 'mongoose';
 //#region Config
 
 // Exit application when error occurs
-mongoose.connection.on('error', (err) => {
+mongoose.connection.on('error', () => {
     // TODO: Logger Here
     process.exit(-1)
 })
