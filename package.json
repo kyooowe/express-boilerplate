@@ -21,7 +21,8 @@
 	"scripts": {
 		"start": "nodemon server.ts",
 		"test": "cross-env NODE_ENV=test jest",
-		"lint": "npx eslint ."
+		"lint": "npx eslint .",
+		"prepare": "husky install"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.0",
@@ -37,6 +38,8 @@
 		"@typescript-eslint/parser": "^5.54.0",
 		"babel-jest": "^29.4.3",
 		"eslint": "^8.35.0",
+		"eslint-config-airbnb-typescript": "^17.0.0",
+		"eslint-config-prettier": "^8.6.0",
 		"eslint-config-standard-with-typescript": "^34.0.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-n": "^15.6.1",
@@ -54,9 +57,7 @@
 		}
 	},
 	"lint-staged": {
-		"*.{ts,json,md}": [
-			"prettier --single-quote --write",
-			"git add"
-		]
+		"src/**/*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+		"src/**/*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write --ignore-unknown"
 	}
 }

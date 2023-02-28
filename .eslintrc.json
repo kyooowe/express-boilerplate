@@ -7,15 +7,17 @@
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "airbnb-typescript",
+        "prettier"
     ],
     "plugins": ["@typescript-eslint"],
     "parser": "@typescript-eslint/parser",
     "overrides": [
     ],
     "parserOptions": {
-        "project": true,
-        "tsconfigRootDir": "__dirname",
+        "project": "./tsconfig.json",
+        "tsconfigRootDir": "__dirname"
     },
     "rules": {
         "indent": ["error", 4]
