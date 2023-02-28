@@ -31,6 +31,8 @@ describe('LOGIN:CONTROLLER', () => {
     })
 
     const mockResponse = () => {
+
+        // eslint-disable-next-line
         const res: any = {};
         res.status = jest.fn().mockReturnValue(res);
         res.json = jest.fn().mockReturnValue(res);

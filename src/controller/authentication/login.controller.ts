@@ -39,7 +39,7 @@ const Login = async (req: Request, res: Response) => {
             }
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         res.status(500).json(SingleApiResponse({ success: false, data: null, statusCode: 500 }))
     }
 }

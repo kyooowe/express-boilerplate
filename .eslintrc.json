@@ -1,0 +1,23 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "plugins": ["@typescript-eslint"],
+    "parser": "@typescript-eslint/parser",
+    "overrides": [
+    ],
+    "parserOptions": {
+        "project": true,
+        "tsconfigRootDir": "__dirname",
+    },
+    "rules": {
+        "indent": ["error", 4]
+    }
+}

@@ -25,7 +25,7 @@ const CreateUser = async (req: Request, res: Response) => {
         const newAccount = await user.save()
         res.status(200).json(SingleApiResponse({success: false, data: newAccount, statusCode: 200}))
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         res.status(500).json(SingleApiResponse({success: false, data: null, statusCode: 500}))
     }
 }
