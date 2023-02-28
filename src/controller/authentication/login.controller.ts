@@ -9,52 +9,61 @@ import jwt from 'jsonwebtoken';
 
 //#region Action
 const Login = async (req: Request, res: Response) => {
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
+	try {
+		const email = req.body.email;
+		const password = req.body.password;
 
-    // Fetch user based on email and password
-    const user = await UserModel.findOne<IUser>({ email: email });
+		// Fetch user based on email and password
+		const user = await UserModel.findOne<IUser>({ email: email });
 
-    if (!user) {
-      res
-        .status(404)
-        .json(
-          SingleApiResponse({ success: true, data: null, statusCode: 404 })
-        );
-    } else {
-      // Check if hash password is equal
-      const isPasswordMatch = await bcrypt.compare(password, user.password);
+		if (!user) {
+			res.status(404).json(
+				SingleApiResponse({
+					success: true,
+					data: null,
+					statusCode: 404
+				})
+			);
+		} else {
+			// Check if hash password is equal
+			const isPasswordMatch = await bcrypt.compare(
+				password,
+				user.password
+			);
 
-      // Flagger for password
-      if (!isPasswordMatch) {
-        res
-          .status(404)
-          .json(
-            SingleApiResponse({ success: true, data: null, statusCode: 404 })
-          );
-      } else {
-        const secretKey = process.env.TOKEN_KEY;
-        const token = jwt.sign({ id: user._id.toString() }, `${secretKey}`, {
-          expiresIn: '2h'
-        });
+			// Flagger for password
+			if (!isPasswordMatch) {
+				res.status(404).json(
+					SingleApiResponse({
+						success: true,
+						data: null,
+						statusCode: 404
+					})
+				);
+			} else {
+				const secretKey = process.env.TOKEN_KEY;
+				const token = jwt.sign(
+					{ id: user._id.toString() },
+					`${secretKey}`,
+					{
+						expiresIn: '2h'
+					}
+				);
 
-        res
-          .status(200)
-          .json(
-            SingleApiResponse({
-              success: true,
-              data: { user, token: token },
-              statusCode: 200
-            })
-          );
-      }
-    }
-  } catch (error: unknown) {
-    res
-      .status(500)
-      .json(SingleApiResponse({ success: false, data: null, statusCode: 500 }));
-  }
+				res.status(200).json(
+					SingleApiResponse({
+						success: true,
+						data: { user, token: token },
+						statusCode: 200
+					})
+				);
+			}
+		}
+	} catch (error: unknown) {
+		res.status(500).json(
+			SingleApiResponse({ success: false, data: null, statusCode: 500 })
+		);
+	}
 };
 
 export { Login };
