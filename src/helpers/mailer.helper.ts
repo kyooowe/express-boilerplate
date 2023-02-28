@@ -11,8 +11,8 @@ const Mailer = async ({ from, to, subject, text, html }: IMailer) => {
         port: 465,
         secure: true,
         auth: {
-            user: "johnmarkbrinas@gmail.com",
-            pass: "tpkzfciqlfyuomtc"
+            user: `${process.env.MAILER_USER}`,
+            pass: `${process.env.MAILER_PASSWORD}`
         }
     });
 
