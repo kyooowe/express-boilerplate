@@ -1,151 +1,162 @@
 //#region Import
-import { Login } from "../login.controller";
-import { UserModel } from "../../../models/user/user.models";
+import { Login } from '../login.controller';
+import { UserModel } from '../../../models/user/user.models';
 import bcrypt from 'bcrypt';
-import { Request } from "express";
+import { Request } from 'express';
 import dotenv from 'dotenv';
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 //#endregion
 
 // Loads variable in .env file
 dotenv.config();
 
-describe('LOGIN:CONTROLLER', () => {
+describe('Login', () => {
+	// Run first
+	beforeAll(async () => {
+		await mongoose.connect(`${process.env.MONGO_DB}`);
+	});
 
-    // Run first
-    beforeAll(async () => {
-        await mongoose.connect(`${process.env.MONGO_DB}`)
-    })
+	// Run after all test case is done
+	afterAll(async () => {
+		await mongoose.disconnect();
+	});
 
-    // Run after all test case is done
-    afterAll(async () => {
-        await mongoose.disconnect()
-    })
+	const mockResponse = () => {
+		// eslint-disable-next-line
+		const res: any = {};
+		res.status = jest.fn().mockReturnValue(res);
+		res.json = jest.fn().mockReturnValue(res);
+		return res;
+	};
 
-    const mockResponse = () => {
-        
-        // eslint-disable-next-line
-        const res: any = {};
-        res.status = jest.fn().mockReturnValue(res);
-        res.json = jest.fn().mockReturnValue(res);
-        return res;
-    };
+	it('should returns a 404 status code when user is not found', async () => {
+		// Mock Request
+		const req = {
+			body: {
+				email: 'nonexistentuser@test.com',
+				password: 'password123'
+			}
+		};
 
-    it('should returns a 404 status code when user is not found', async () => {
+		// Mock Response
+		const res = mockResponse();
 
-        // Mock Request
-        const req = {
-            body: {
-                email: 'nonexistentuser@test.com',
-                password: 'password123'
-            }
-        };
+		// Run Component
+		await Login(req as Request, res);
 
-        // Mock Response
-        const res = mockResponse()
+		// Expected Result
+		expect(res.status).toHaveBeenCalledWith(404);
+		expect(res.json).toHaveBeenCalledWith({
+			count: 0,
+			success: true,
+			data: null,
+			statusCode: 404,
+			statusText: 'Not Found!'
+		});
+	});
 
-        // Run Component
-        await Login(req as Request, res);
+	test('returns a 404 status code when password is incorrect', async () => {
+		// Create user and mock as existing
+		const existingUser = new UserModel({
+			email: 'existinguser@test.com',
+			password: await bcrypt.hash('password123', 8),
+			lastName: 'existing',
+			firstName: 'existing',
+			middleName: 'existing'
+		});
+		await existingUser.save();
 
-        // Expected Result
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.json).toHaveBeenCalledWith({ count: 0, success: true, data: null, statusCode: 404, statusText: "Not Found!" });
-    });
+		// Mock Request
+		const req = {
+			body: {
+				email: 'existinguser@test.com',
+				password: 'wrongpassword'
+			}
+		};
 
-    test('returns a 404 status code when password is incorrect', async () => {
+		// Mock Response
+		const res = mockResponse();
 
-        // Create user and mock as existing
-        const existingUser = new UserModel({
-            email: 'existinguser@test.com',
-            password: await bcrypt.hash('password123', 8),
-            lastName: "existing",
-            firstName: "existing",
-            middleName: "existing"
-        });
-        await existingUser.save();
+		// Run Component
+		await Login(req as Request, res);
 
-        // Mock Request
-        const req = {
-            body: {
-                email: 'existinguser@test.com',
-                password: 'wrongpassword'
-            }
-        };
+		// Expected Result
+		expect(res.status).toHaveBeenCalledWith(404);
+		expect(res.json).toHaveBeenCalledWith({
+			count: 0,
+			success: true,
+			data: null,
+			statusCode: 404,
+			statusText: 'Not Found!'
+		});
 
-        // Mock Response
-        const res = mockResponse()
+		await existingUser.deleteOne({ email: existingUser.email });
+	});
 
-        // Run Component
-        await Login(req as Request, res);
+	test('returns a token and a 200 status code when the user is found and the password is correct', async () => {
+		// Create user and mock as existing
+		const existingUser = new UserModel({
+			email: 'existinguser@test.com',
+			password: await bcrypt.hash('password123', 8),
+			lastName: 'existing',
+			firstName: 'existing',
+			middleName: 'existing'
+		});
+		await existingUser.save();
 
-        // Expected Result
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.json).toHaveBeenCalledWith({ count: 0, success: true, data: null, statusCode: 404, statusText: "Not Found!" });
+		// Mock Request
+		const req = {
+			body: {
+				email: 'existinguser@test.com',
+				password: 'password123'
+			}
+		};
 
-        await existingUser.deleteOne({ email: existingUser.email })
-    });
+		// Mock Response
+		const res = mockResponse();
 
-    test('returns a token and a 200 status code when the user is found and the password is correct', async () => {
+		// Run Component
+		await Login(req as Request, res);
 
-        // Create user and mock as existing
-        const existingUser = new UserModel({
-            email: 'existinguser@test.com',
-            password: await bcrypt.hash('password123', 8),
-            lastName: "existing",
-            firstName: "existing",
-            middleName: "existing"
-        });
-        await existingUser.save();
+		// Expected Result
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith({
+			count: 1,
+			success: true,
+			data: {
+				user: expect.anything(),
+				token: expect.any(String)
+			},
+			statusCode: 200,
+			statusText: 'Success!'
+		});
 
-        // Mock Request
-        const req = {
-            body: {
-                email: 'existinguser@test.com',
-                password: 'password123'
-            }
-        };
+		await existingUser.deleteOne({ email: existingUser.email });
+	});
 
-        // Mock Response
-        const res = mockResponse()
+	it('should return 500 if an error occurs', async () => {
+		// Mock UserModel.findOne to throw an error
+		UserModel.findOne = jest
+			.fn()
+			.mockRejectedValueOnce(new Error('Test error'));
 
-        // Run Component
-        await Login(req as Request, res);
+		// Mock Request
+		const req = { body: { email: 'test@email.com' } } as Request;
 
-        // Expected Result
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({
-            count: 1,
-            success: true,
-            data: {
-                user: expect.anything(),
-                token: expect.any(String)
-            },
-            statusCode: 200,
-            statusText: "Success!"
-        });
+		// Mock Response
+		const res = mockResponse();
 
-        await existingUser.deleteOne({ email: existingUser.email })
-    });
+		// Run Component
+		await Login(req, res);
 
-    it('should return 500 if an error occurs', async () => {
-
-        // Mock UserModel.findOne to throw an error
-        UserModel.findOne = jest.fn().mockRejectedValueOnce(new Error('Test error'));
-
-        // Mock Request
-        const req = { body: { email: "test@email.com" } } as Request;
-
-        // Mock Response
-        const res = mockResponse()
-
-        // Run Component
-        await Login(req, res);
-
-        // Expected Result
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.json).toHaveBeenCalledWith(
-            { count: 0, success: false, data: null, statusCode: 500, statusText: 'Something error occured, please contact administrator!' }
-        );
-    });
-
-})
+		// Expected Result
+		expect(res.status).toHaveBeenCalledWith(500);
+		expect(res.json).toHaveBeenCalledWith({
+			count: 0,
+			success: false,
+			data: null,
+			statusCode: 500,
+			statusText: 'Something error occured, please contact administrator!'
+		});
+	});
+});
