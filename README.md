@@ -52,6 +52,8 @@ A boilerplate/template for building RestAPI's using NodeJS, TypeScript, Express 
 - CORS
 - Git hooks using hustky and lint-staged
 - Linting using prettier, eslint and tslint
+- Compression using GZIP
+- Middleware HTTP Protection using Helmet
 
 ## Folder Structure
     
