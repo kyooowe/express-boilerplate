@@ -1,46 +1,66 @@
 //#region Import
-import { ProductsModel } from "../../models/products/products.models";
-import { Request, Response } from "express";
-import { ApiResponse, SingleApiResponse } from "../../helpers/response.helper";
+import { ProductsModel } from '../../models/products/products.models';
+import { Request, Response } from 'express';
+import { ApiResponse, SingleApiResponse } from '../../helpers/response.helper';
 
 // eslint-disable-next-line
-import { CustomRequest } from "../../interface/request.interface";
+import { CustomRequest } from '../../interface/request.interface';
 //#endregion
 
 //#region Action
 const FetchAllProducts = async (req: Request, res: Response) => {
-    try {
-        
-        // Decoded userId in token
-        // const userId = (req as CustomRequest)
-    
-        // Fetch then Return
-        const products = await ProductsModel.find()
-        res.status(200).json(ApiResponse({success: false, data: products, statusCode: 200}))
+	try {
+		// Decoded userId in token
+		// const userId = (req as CustomRequest)
 
-    } catch(err: unknown) {
-        res.status(500).json(SingleApiResponse({success: false, data: null, statusCode: 500}))
-    }
-}
+		// Fetch then Return
+		const products = await ProductsModel.find();
+		res.status(200).json(
+			ApiResponse({ success: true, data: products, statusCode: 200 })
+		);
+	} catch (err: unknown) {
+		res.status(500).json(
+			SingleApiResponse({ success: false, data: null, statusCode: 500 })
+		);
+	}
+};
 
 const CreateProducts = async (req: Request, res: Response) => {
-    
-    try {
-        
-        // Create new products
-        const products = new ProductsModel({
-            name: req.body.name,
-            type: req.body.type
-        });
+	try {
+		const isProductNameExisting = await ProductsModel.findOne({
+			name: req.body.name
+		});
 
-        // Save then Return the latest
-        const newProducts = await products.save();
-        res.status(200).json(SingleApiResponse({success: false, data: newProducts, statusCode: 200}))
+		if (isProductNameExisting)
+			res.status(409).json(
+				SingleApiResponse({
+					success: true,
+					data: null,
+					statusCode: 409
+				})
+			);
 
-    } catch(err: unknown) {
-        res.status(500).json(SingleApiResponse({success: false, data: null, statusCode: 500}))
-    }
-}
-//#endregion 
+		// Create new products
+		const product = new ProductsModel({
+			name: req.body.name,
+			type: req.body.type
+		});
 
-export { FetchAllProducts, CreateProducts }
+		// Save then Return the latest
+		const newProduct = await product.save();
+		res.status(200).json(
+			SingleApiResponse({
+				success: true,
+				data: newProduct,
+				statusCode: 200
+			})
+		);
+	} catch (err: unknown) {
+		res.status(500).json(
+			SingleApiResponse({ success: false, data: null, statusCode: 500 })
+		);
+	}
+};
+//#endregion
+
+export { FetchAllProducts, CreateProducts };
