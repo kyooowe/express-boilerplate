@@ -56,6 +56,7 @@ A boilerplate/template for building RestAPI's using NodeJS, TypeScript, Express 
 - Linting using prettier, eslint and tslint
 - Compression using GZIP
 - Middleware HTTP Protection using Helmet
+- Email sender using NodeMailer
 
 ## Folder Structure
     
