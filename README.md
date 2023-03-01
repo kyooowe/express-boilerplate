@@ -46,6 +46,7 @@ A boilerplate/template for building RestAPI's using NodeJS, TypeScript, Express 
 
 - NoSQL database using MongoDB
 - JWT Authentication
+- Password encryption using Bcrypt
 - Testing: automated testing using Jest
 - Dependency management with NPM
 - Environment variables using cross-env and dotenv
