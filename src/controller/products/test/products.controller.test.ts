@@ -58,7 +58,7 @@ describe('Fetch:Products', () => {
 	});
 
 	it('should return 500 if an error occurs', async () => {
-		// Mock UserModel.findOne to throw an error
+		// Mock ProductsModel.find to throw an error
 		ProductsModel.find = jest
 			.fn()
 			.mockRejectedValueOnce(new Error('Test error'));
@@ -85,7 +85,7 @@ describe('Fetch:Products', () => {
 });
 
 describe('Create:Products', () => {
-	it('should returns a 409 status code when user already exist', async () => {
+	it('should returns a 409 status code when products already exist', async () => {
 		// Create request object
 		const req = {
 			body: {
@@ -96,7 +96,7 @@ describe('Create:Products', () => {
 		// Create mock response
 		const res = mockResponse();
 
-		// Run Forgot Password Component
+		// Run Create Products Component
 		await CreateProducts(req as Request, res);
 
 		// Expected Result
